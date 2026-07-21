@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turbito - Juego de Kino</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica', 'Arial', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .app {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+        }
+
+        .app-header {
+            background: linear-gradient(90deg, #0f3460 0%, #16213e 100%);
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 3px solid #e94560;
+        }
+
+        .app-header h1 {
+            font-size: 3rem;
+            margin: 0;
+            text-shadow: 0 2px 10px rgba(233, 69, 96, 0.5);
+            letter-spacing: 2px;
+        }
+
+        .app-header p {
+            margin: 0.5rem 0 0;
+            font-size: 1.1rem;
+            color: #e94560;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* User Balance */
+        .user-balance {
+            position: relative;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #e94560 0%, #c23049 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 2px solid #ff6b7a;
+            box-shadow: 0 4px 15px rgba(233, 69, 96, 0.3);
+        }
+
+        .balance-card h3 {
+            margin: 0 0 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .balance-amount {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .winning-notification {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(90deg, #27ae60 0%, #229954 100%);
+            color: #fff;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            white-space: nowrap;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.4);
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            0% {
+                transform: translateX(-50%) translateY(-20px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Draw Display */
+        .draw-display {
+            background: rgba(15, 52, 96, 0.8);
+            border-radius: 12px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            border: 2px solid #e94560;
+        }
+
+        .draw-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .draw-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
+        .timer {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: rgba(233, 69, 96, 0.2);
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            border: 1px solid #e94560;
+        }
+
+        .timer-label {
+            font-weight: bold;
+            color: #e94560;
+            font-size: 0.9rem;
+        }
+
+        .timer-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #fff;
+            min-width: 50px;
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+
+        .drawn-numbers {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+            gap: 0.8rem;
+        }
+
+        .drawn-number {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e94560 0%, #c23049 100%);
+            border: 2px solid #ff6b7a;
+            border-radius: 8px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(233, 69, 96, 0.5);
+            animation: popIn 0.3s ease-out;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .no-draw {
+            text-align: center;
+            padding: 2rem;
+            color: #999;
+            font-style: italic;
+        }
+
+        /* Game Board */
+        .game-board {
+            background: rgba(15, 52, 96, 0.8);
+            border-radius: 12px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            border: 2px solid #e94560;
+        }
+
+        .numbers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            gap: 0.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .number-btn {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+            border: 2px solid #533483;
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .number-btn:hover {
+            background: linear-gradient(135deg, #533483 0%, #16213e 100%);
+            border-color: #e94560;
+            transform: scale(1.05);
+        }
+
+        .number-btn.selected {
+            background: linear-gradient(135deg, #e94560 0%, #c23049 100%);
+            border-color: #ff6b7a;
+            box-shadow: 0 0 15px rgba(233, 69, 96, 0.5);
+            transform: scale(1.1);
+        }
+
+        .bet-controls {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid rgba(233, 69, 96, 0.3);
+        }
+
+        .selection-info {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .counter {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #e94560;
+        }
+
+        .bet-amount-control {
+            margin-bottom: 1.5rem;
+        }
+
+        .bet-amount-control label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .bet-input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .bet-input-group input {
+            flex: 1;
+            padding: 0.75rem;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #533483;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        .bet-input-group input:focus {
+            outline: none;
+            border-color: #e94560;
+            box-shadow: 0 0 10px rgba(233, 69, 96, 0.3);
+        }
+
+        .bet-quick-btn {
+            padding: 0.75rem 1rem;
+            background: #533483;
+            border: 2px solid #533483;
+            color: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .bet-quick-btn:hover {
+            background: #e94560;
+            border-color: #e94560;
+        }
+
+        .bet-label {
+            display: block;
+            text-align: center;
+            color: #e94560;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.8rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #e94560 0%, #c23049 100%);
+            color: #fff;
+            border: 2px solid #e94560;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            box-shadow: 0 0 20px rgba(233, 69, 96, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #533483;
+            color: #fff;
+            border: 2px solid #533483;
+        }
+
+        .btn-secondary:hover {
+            background: #7a4fa3;
+            border-color: #7a4fa3;
+        }
+
+        .btn-danger {
+            background: rgba(255, 107, 122, 0.2);
+            color: #ff6b7a;
+            border: 2px solid #ff6b7a;
+        }
+
+        .btn-danger:hover {
+            background: rgba(233, 69, 96, 0.3);
+            border-color: #e94560;
+        }
+
+        /* AI Players */
+        .ai-players {
+            background: rgba(15, 52, 96, 0.8);
+            border-radius: 12px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            border: 2px solid #533483;
+        }
+
+        .ai-players h3 {
+            margin: 0 0 1rem;
+            font-size: 1.2rem;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .players-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .player-card {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(83, 52, 131, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .player-card:hover {
+            border-color: #533483;
+            background: rgba(83, 52, 131, 0.2);
+        }
+
+        .player-name {
+            font-weight: bold;
+            color: #fff;
+            font-size: 0.95rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .player-balance {
+            font-size: 1rem;
+            color: #e94560;
+            font-weight: bold;
+        }
+
+        .player-bet-info {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .bet-result {
+            color: #999;
+        }
+
+        .bet-win {
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        /* Game Stats */
+        .game-stats {
+            background: rgba(15, 52, 96, 0.8);
+            border-radius: 12px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            border: 2px solid #533483;
+        }
+
+        .game-stats h3 {
+            margin: 0 0 1rem;
+            font-size: 1.2rem;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stats-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .stat-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.8rem;
+            border-radius: 6px;
+            border-left: 3px solid #533483;
+            transition: all 0.3s ease;
+        }
+
+        .stat-item.win {
+            border-left-color: #27ae60;
+            background: rgba(39, 174, 96, 0.1);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.4rem;
+        }
+
+        .stat-matches {
+            font-weight: bold;
+            color: #fff;
+            font-size: 0.95rem;
+        }
+
+        .stat-prize {
+            color: #27ae60;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .stat-time {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .no-history {
+            text-align: center;
+            color: #666;
+            padding: 1rem;
+            font-style: italic;
+        }
+
+        .stats-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .stats-list::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .stats-list::-webkit-scrollbar-thumb {
+            background: #533483;
+            border-radius: 10px;
+        }
+
+        .stats-list::-webkit-scrollbar-thumb:hover {
+            background: #e94560;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                flex-direction: row;
+                gap: 1rem;
+            }
+
+            .sidebar > div {
+                flex: 1;
+            }
+
+            .players-list {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.8rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-header h1 {
+                font-size: 2rem;
+            }
+
+            .container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                margin: 1rem auto;
+            }
+
+            .sidebar {
+                flex-direction: column;
+            }
+
+            .numbers-grid {
+                grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+                gap: 0.6rem;
+            }
+
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Componente UserBalance
+        const UserBalance = ({ balance, winnings }) => {
+            const [showWinning, setShowWinning] = useState(false);
+
+            useEffect(() => {
+                if (winnings > 0) {
+                    setShowWinning(true);
+                    const timer = setTimeout(() => setShowWinning(false), 3000);
+                    return () => clearTimeout(timer);
+                }
+            }, [winnings]);
+
+            return (
+                <div className="user-balance">
+                    <div className="balance-card">
+                        <h3>Saldo Disponible</h3>
+                        <div className="balance-amount">S/ {balance.toLocaleString()}</div>
+                    </div>
+                    {showWinning && (
+                        <div className="winning-notification">
+                            <span>¡GANASTE S/ {winnings.toLocaleString()}!</span>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // Componente DrawDisplay
+        const DrawDisplay = ({ drawnNumbers, nextDrawTime, formatTime }) => {
+            return (
+                <div className="draw-display">
+                    <div className="draw-header">
+                        <h2>Último Sorteo</h2>
+                        <div className="timer">
+                            <span className="timer-label">Próximo en:</span>
+                            <span className="timer-value">{formatTime(nextDrawTime)}</span>
+                        </div>
+                    </div>
+
+                    {drawnNumbers.length > 0 ? (
+                        <div className="drawn-numbers">
+                            {drawnNumbers.map((num) => (
+                                <div key={num} className="drawn-number">
+                                    {num}
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="no-draw">
+                            <p>Esperando primer sorteo...</p>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // Componente GameBoard
+        const GameBoard = ({
+            selectedNumbers,
+            toggleNumber,
+            placeBet,
+            clearSelection,
+            autoSelect,
+            betAmount,
+            setBetAmount,
+            selectedCount,
+        }) => {
+            return (
+                <div className="game-board">
+                    <div className="numbers-grid">
+                        {Array.from({ length: 24 }, (_, i) => i + 1).map((num) => (
+                            <button
+                                key={num}
+                                className={`number-btn ${selectedNumbers.includes(num) ? 'selected' : ''}`}
+                                onClick={() => toggleNumber(num)}
+                            >
+                                {num}
+                            </button>
+                        ))}
+                    </div>
+
+                    <div className="bet-controls">
+                        <div className="selection-info">
+                            <span className="counter">{selectedCount}/12 seleccionados</span>
+                        </div>
+
+                        <div className="bet-amount-control">
+                            <label htmlFor="bet-amount">Monto de Apuesta:</label>
+                            <div className="bet-input-group">
+                                <button className="bet-quick-btn" onClick={() => setBetAmount(Math.max(10, betAmount - 50))}>-</button>
+                                <input
+                                    id="bet-amount"
+                                    type="number"
+                                    value={betAmount}
+                                    onChange={(e) => setBetAmount(Math.max(10, parseInt(e.target.value) || 0)))}
+                                    min="10"
+                                    max="10000"
+                                />
+                                <button className="bet-quick-btn" onClick={() => setBetAmount(betAmount + 50)}>+</button>
+                            </div>
+                            <span className="bet-label">S/ {betAmount}</span>
+                        </div>
+
+                        <div className="action-buttons">
+                            <button className="btn btn-primary" onClick={placeBet} disabled={selectedCount !== 12}>
+                                APOSTAR
+                            </button>
+                            <button className="btn btn-secondary" onClick={autoSelect}>
+                                AUTO
+                            </button>
+                            <button className="btn btn-danger" onClick={clearSelection}>
+                                LIMPIAR
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // Componente AIPlayers
+        const AIPlayers = ({ players }) => {
+            return (
+                <div className="ai-players">
+                    <h3>Jugadores IA</h3>
+                    <div className="players-list">
+                        {players.map((player) => (
+                            <div key={player.id} className="player-card">
+                                <div className="player-name">{player.name}</div>
+                                <div className="player-balance">S/ {player.balance.toLocaleString()}</div>
+                                {player.bets.length > 0 && (
+                                    <div className="player-bet-info">
+                                        <span className="bet-result">
+                                            {player.bets[0].matches} aciertos
+                                        </span>
+                                        {player.bets[0].prize > 0 && (
+                                            <span className="bet-win">+S/ {player.bets[0].prize}</span>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        // Componente GameStats
+        const GameStats = ({ history }) => {
+            return (
+                <div className="game-stats">
+                    <h3>Histórico</h3>
+                    <div className="stats-list">
+                        {history.length === 0 ? (
+                            <div className="no-history">Sin histórico aún</div>
+                        ) : (
+                            history.map((stat, index) => (
+                                <div key={index} className={`stat-item ${stat.prize > 0 ? 'win' : ''}`}>
+                                    <div className="stat-header">
+                                        <span className="stat-matches">{stat.matches} aciertos</span>
+                                        {stat.prize > 0 && <span className="stat-prize">+S/ {stat.prize}</span>}
+                                    </div>
+                                    <div className="stat-time">
+                                        {new Date(stat.timestamp).toLocaleTimeString()}
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        // Componente Principal App
+        const App = () => {
+            const [selectedNumbers, setSelectedNumbers] = useState([]);
+            const [userBalance, setUserBalance] = useState(10000);
+            const [betAmount, setBetAmount] = useState(100);
+            const [gameStarted, setGameStarted] = useState(false);
+            const [drawnNumbers, setDrawnNumbers] = useState([]);
+            const [nextDrawTime, setNextDrawTime] = useState(0);
+            const [aiPlayers, setAIPlayers] = useState([]);
+            const [gameHistory, setGameHistory] = useState([]);
+            const [userBets, setUserBets] = useState([]);
+            const [winnings, setWinnings] = useState(0);
+
+            // Inicializar jugadores IA
+            useEffect(() => {
+                const players = [
+                    { id: 1, name: 'IA - Player 1', balance: 50000, bets: [] },
+                    { id: 2, name: 'IA - Player 2', balance: 50000, bets: [] },
+                    { id: 3, name: 'IA - Player 3', balance: 50000, bets: [] },
+                    { id: 4, name: 'IA - Player 4', balance: 50000, bets: [] },
+                ];
+                setAIPlayers(players);
+                setGameStarted(true);
+                setNextDrawTime(300); // 5 minutos
+            }, []);
+
+            // Timer para el sorteo
+            useEffect(() => {
+                if (!gameStarted) return;
+
+                const timer = setInterval(() => {
+                    setNextDrawTime((prev) => {
+                        if (prev <= 1) {
+                            performDraw();
+                            return 300; // Reiniciar a 5 minutos
+                        }
+                        return prev - 1;
+                    });
+                }, 1000);
+
+                return () => clearInterval(timer);
+            }, [gameStarted, userBets, aiPlayers]);
+
+            const performDraw = () => {
+                // Sortear 12 números de 24
+                const drawn = [];
+                while (drawn.length < 12) {
+                    const num = Math.floor(Math.random() * 24) + 1;
+                    if (!drawn.includes(num)) drawn.push(num);
+                }
+                drawn.sort((a, b) => a - b);
+                setDrawnNumbers(drawn);
+
+                // Calcular resultados para el usuario
+                if (userBets.length > 0) {
+                    const lastBet = userBets[userBets.length - 1];
+                    const matches = lastBet.numbers.filter((n) => drawn.includes(n)).length;
+                    const unmatches = 12 - matches;
+
+                    let prize = 0;
+                    let message = '';
+
+                    if (matches === 12 || unmatches === 0) {
+                        prize = 100000;
+                        message = '¡12 aciertos! ¡GANASTE S/ 100,000!';
+                    } else if (matches === 11 || unmatches === 1) {
+                        prize = 1000;
+                        message = '¡11 aciertos! ¡GANASTE S/ 1,000!';
+                    } else if (matches === 10 || unmatches === 2) {
+                        prize = 40;
+                        message = '¡10 aciertos! ¡GANASTE S/ 40!';
+                    } else if (matches === 9 || unmatches === 3) {
+                        prize = 4;
+                        message = '¡9 aciertos! ¡GANASTE S/ 4!';
+                    } else if (matches === 8 || unmatches === 4 || matches === 6) {
+                        prize = 0;
+                        message = '¡Jugada Gratis Turbito!';
+                    }
+
+                    if (prize > 0) {
+                        setUserBalance((prev) => prev + prize);
+                        setWinnings(prize);
+                    }
+
+                    const result = {
+                        draw: drawn,
+                        userBet: lastBet.numbers,
+                        matches,
+                        prize,
+                        message,
+                        timestamp: new Date(),
+                    };
+                    setGameHistory((prev) => [result, ...prev.slice(0, 9)]);
+                }
+
+                // IA hace apuestas después del sorteo
+                generateAIBets(drawn);
+            };
+
+            const generateAIBets = (lastDraw) => {
+                const updatedPlayers = aiPlayers.map((player) => {
+                    const bet = {
+                        amount: Math.floor(Math.random() * 500) + 50,
+                        numbers: generateRandomNumbers(),
+                    };
+
+                    let prize = 0;
+                    const matches = bet.numbers.filter((n) => lastDraw.includes(n)).length;
+                    const unmatches = 12 - matches;
+
+                    if (matches === 12 || unmatches === 0) {
+                        prize = 100000;
+                    } else if (matches === 11 || unmatches === 1) {
+                        prize = 1000;
+                    } else if (matches === 10 || unmatches === 2) {
+                        prize = 40;
+                    } else if (matches === 9 || unmatches === 3) {
+                        prize = 4;
+                    }
+
+                    return {
+                        ...player,
+                        balance: player.balance - bet.amount + prize,
+                        bets: [{ ...bet, matches, prize }],
+                    };
+                });
+                setAIPlayers(updatedPlayers);
+            };
+
+            const generateRandomNumbers = () => {
+                const numbers = [];
+                while (numbers.length < 12) {
+                    const num = Math.floor(Math.random() * 24) + 1;
+                    if (!numbers.includes(num)) numbers.push(num);
+                }
+                return numbers.sort((a, b) => a - b);
+            };
+
+            const toggleNumber = (num) => {
+                if (selectedNumbers.includes(num)) {
+                    setSelectedNumbers(selectedNumbers.filter((n) => n !== num));
+                } else if (selectedNumbers.length < 12) {
+                    setSelectedNumbers([...selectedNumbers, num]);
+                }
+            };
+
+            const placeBet = () => {
+                if (selectedNumbers.length !== 12) {
+                    alert('Debes seleccionar exactamente 12 números');
+                    return;
+                }
+                if (betAmount > userBalance) {
+                    alert('No tienes suficiente saldo');
+                    return;
+                }
+
+                setUserBalance((prev) => prev - betAmount);
+                const bet = {
+                    numbers: [...selectedNumbers],
+                    amount: betAmount,
+                    timestamp: new Date(),
+                };
+                setUserBets((prev) => [bet, ...prev]);
+                setSelectedNumbers([]);
+                setWinnings(0);
+                alert('¡Apuesta realizada! Espera el próximo sorteo.');
+            };
+
+            const clearSelection = () => {
+                setSelectedNumbers([]);
+            };
+
+            const autoSelect = () => {
+                setSelectedNumbers(generateRandomNumbers());
+            };
+
+            const formatTime = (seconds) => {
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            };
+
+            return (
+                <div className="app">
+                    <header className="app-header">
+                        <h1>🎰 TURBITO</h1>
+                        <p>Juega, Gana, Disfruta</p>
+                    </header>
+
+                    <div className="container">
+                        <div className="main-content">
+                            <UserBalance balance={userBalance} winnings={winnings} />
+                            <DrawDisplay drawnNumbers={drawnNumbers} nextDrawTime={nextDrawTime} formatTime={formatTime} />
+                            <GameBoard
+                                selectedNumbers={selectedNumbers}
+                                toggleNumber={toggleNumber}
+                                placeBet={placeBet}
+                                clearSelection={clearSelection}
+                                autoSelect={autoSelect}
+                                betAmount={betAmount}
+                                setBetAmount={setBetAmount}
+                                selectedCount={selectedNumbers.length}
+                            />
+                        </div>
+
+                        <aside className="sidebar">
+                            <AIPlayers players={aiPlayers} />
+                            <GameStats history={gameHistory} />
+                        </aside>
+                    </div>
+                </div>
+            );
+        };
+
+        // Renderizar la aplicación
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
