@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Turbito - Juego de Kino</title>
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -15,18 +12,11 @@
         }
 
         body {
-            font-family: 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica', 'Arial', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            font-family: 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             min-height: 100vh;
             color: #fff;
-        }
-
-        .app {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #fff;
+            padding: 1rem;
         }
 
         .app-header {
@@ -34,28 +24,28 @@
             padding: 2rem;
             text-align: center;
             border-bottom: 3px solid #e94560;
+            border-radius: 12px;
+            margin-bottom: 2rem;
         }
 
         .app-header h1 {
-            font-size: 3rem;
-            margin: 0;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
             text-shadow: 0 2px 10px rgba(233, 69, 96, 0.5);
             letter-spacing: 2px;
         }
 
         .app-header p {
-            margin: 0.5rem 0 0;
-            font-size: 1.1rem;
+            font-size: 1rem;
             color: #e94560;
         }
 
         .container {
+            max-width: 1200px;
+            margin: 0 auto;
             display: grid;
-            grid-template-columns: 1fr 350px;
+            grid-template-columns: 1fr 300px;
             gap: 2rem;
-            max-width: 1400px;
-            margin: 2rem auto;
-            padding: 0 1rem;
         }
 
         .main-content {
@@ -71,10 +61,6 @@
         }
 
         /* User Balance */
-        .user-balance {
-            position: relative;
-        }
-
         .balance-card {
             background: linear-gradient(135deg, #e94560 0%, #c23049 100%);
             border-radius: 12px;
@@ -85,23 +71,21 @@
         }
 
         .balance-card h3 {
-            margin: 0 0 0.5rem;
+            margin-bottom: 0.5rem;
             font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: rgba(255, 255, 255, 0.9);
+            opacity: 0.9;
         }
 
         .balance-amount {
             font-size: 2rem;
             font-weight: bold;
-            color: #fff;
-            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
         }
 
         .winning-notification {
-            position: absolute;
-            top: -50px;
+            position: fixed;
+            top: 20px;
             left: 50%;
             transform: translateX(-50%);
             background: linear-gradient(90deg, #27ae60 0%, #229954 100%);
@@ -110,17 +94,17 @@
             border-radius: 8px;
             font-weight: bold;
             font-size: 1.1rem;
-            white-space: nowrap;
             box-shadow: 0 4px 15px rgba(39, 174, 96, 0.4);
+            z-index: 1000;
             animation: slideDown 0.5s ease-out;
         }
 
         @keyframes slideDown {
-            0% {
-                transform: translateX(-50%) translateY(-20px);
+            from {
+                transform: translateX(-50%) translateY(-100px);
                 opacity: 0;
             }
-            100% {
+            to {
                 transform: translateX(-50%) translateY(0);
                 opacity: 1;
             }
@@ -130,8 +114,7 @@
         .draw-display {
             background: rgba(15, 52, 96, 0.8);
             border-radius: 12px;
-            padding: 2rem;
-            backdrop-filter: blur(10px);
+            padding: 1.5rem;
             border: 2px solid #e94560;
         }
 
@@ -143,9 +126,7 @@
         }
 
         .draw-header h2 {
-            margin: 0;
-            font-size: 1.5rem;
-            color: #fff;
+            font-size: 1.3rem;
         }
 
         .timer {
@@ -165,12 +146,10 @@
         }
 
         .timer-value {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: bold;
-            color: #fff;
-            min-width: 50px;
-            text-align: right;
             font-family: 'Courier New', monospace;
+            min-width: 50px;
         }
 
         .drawn-numbers {
@@ -187,9 +166,8 @@
             background: linear-gradient(135deg, #e94560 0%, #c23049 100%);
             border: 2px solid #ff6b7a;
             border-radius: 8px;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: bold;
-            color: #fff;
             box-shadow: 0 0 15px rgba(233, 69, 96, 0.5);
             animation: popIn 0.3s ease-out;
         }
@@ -197,14 +175,12 @@
         @keyframes popIn {
             0% {
                 transform: scale(0);
-                opacity: 0;
             }
             50% {
                 transform: scale(1.1);
             }
             100% {
                 transform: scale(1);
-                opacity: 1;
             }
         }
 
@@ -212,15 +188,13 @@
             text-align: center;
             padding: 2rem;
             color: #999;
-            font-style: italic;
         }
 
         /* Game Board */
         .game-board {
             background: rgba(15, 52, 96, 0.8);
             border-radius: 12px;
-            padding: 2rem;
-            backdrop-filter: blur(10px);
+            padding: 1.5rem;
             border: 2px solid #e94560;
         }
 
@@ -236,11 +210,11 @@
             background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
             border: 2px solid #533483;
             color: #fff;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: bold;
             cursor: pointer;
             border-radius: 8px;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -269,12 +243,9 @@
         .selection-info {
             text-align: center;
             margin-bottom: 1rem;
-        }
-
-        .counter {
             font-size: 1.1rem;
-            font-weight: bold;
             color: #e94560;
+            font-weight: bold;
         }
 
         .bet-amount-control {
@@ -285,7 +256,6 @@
             display: block;
             margin-bottom: 0.5rem;
             font-weight: bold;
-            color: #fff;
         }
 
         .bet-input-group {
@@ -319,7 +289,7 @@
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
 
         .bet-quick-btn:hover {
@@ -332,7 +302,7 @@
             text-align: center;
             color: #e94560;
             font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
         }
 
         .action-buttons {
@@ -342,13 +312,13 @@
         }
 
         .btn {
-            padding: 0.75rem 1.5rem;
+            padding: 0.75rem 1rem;
             border: none;
             border-radius: 6px;
             font-weight: bold;
-            font-size: 1rem;
+            font-size: 0.9rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             text-transform: uppercase;
         }
 
@@ -376,7 +346,6 @@
 
         .btn-secondary:hover {
             background: #7a4fa3;
-            border-color: #7a4fa3;
         }
 
         .btn-danger {
@@ -387,7 +356,6 @@
 
         .btn-danger:hover {
             background: rgba(233, 69, 96, 0.3);
-            border-color: #e94560;
         }
 
         /* AI Players */
@@ -395,14 +363,12 @@
             background: rgba(15, 52, 96, 0.8);
             border-radius: 12px;
             padding: 1.5rem;
-            backdrop-filter: blur(10px);
             border: 2px solid #533483;
         }
 
         .ai-players h3 {
-            margin: 0 0 1rem;
-            font-size: 1.2rem;
-            color: #fff;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
@@ -418,36 +384,24 @@
             padding: 1rem;
             border-radius: 8px;
             border: 1px solid rgba(83, 52, 131, 0.5);
-            transition: all 0.3s ease;
-        }
-
-        .player-card:hover {
-            border-color: #533483;
-            background: rgba(83, 52, 131, 0.2);
         }
 
         .player-name {
             font-weight: bold;
-            color: #fff;
-            font-size: 0.95rem;
-            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
         }
 
         .player-balance {
-            font-size: 1rem;
             color: #e94560;
             font-weight: bold;
         }
 
         .player-bet-info {
             margin-top: 0.5rem;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             display: flex;
             justify-content: space-between;
-        }
-
-        .bet-result {
-            color: #999;
         }
 
         .bet-win {
@@ -460,14 +414,12 @@
             background: rgba(15, 52, 96, 0.8);
             border-radius: 12px;
             padding: 1.5rem;
-            backdrop-filter: blur(10px);
             border: 2px solid #533483;
         }
 
         .game-stats h3 {
-            margin: 0 0 1rem;
-            font-size: 1.2rem;
-            color: #fff;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
@@ -476,7 +428,7 @@
             display: flex;
             flex-direction: column;
             gap: 0.8rem;
-            max-height: 300px;
+            max-height: 250px;
             overflow-y: auto;
         }
 
@@ -485,7 +437,7 @@
             padding: 0.8rem;
             border-radius: 6px;
             border-left: 3px solid #533483;
-            transition: all 0.3s ease;
+            font-size: 0.85rem;
         }
 
         .stat-item.win {
@@ -493,53 +445,26 @@
             background: rgba(39, 174, 96, 0.1);
         }
 
-        .stat-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.4rem;
-        }
-
         .stat-matches {
             font-weight: bold;
             color: #fff;
-            font-size: 0.95rem;
         }
 
         .stat-prize {
             color: #27ae60;
             font-weight: bold;
-            font-size: 0.9rem;
         }
 
         .stat-time {
-            font-size: 0.8rem;
             color: #999;
+            font-size: 0.75rem;
+            margin-top: 0.3rem;
         }
 
         .no-history {
             text-align: center;
             color: #666;
             padding: 1rem;
-            font-style: italic;
-        }
-
-        .stats-list::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .stats-list::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-        }
-
-        .stats-list::-webkit-scrollbar-thumb {
-            background: #533483;
-            border-radius: 10px;
-        }
-
-        .stats-list::-webkit-scrollbar-thumb:hover {
-            background: #e94560;
         }
 
         @media (max-width: 1024px) {
@@ -548,18 +473,9 @@
             }
 
             .sidebar {
-                flex-direction: row;
-                gap: 1rem;
-            }
-
-            .sidebar > div {
-                flex: 1;
-            }
-
-            .players-list {
                 display: grid;
                 grid-template-columns: repeat(2, 1fr);
-                gap: 0.8rem;
+                gap: 1rem;
             }
         }
 
@@ -568,422 +484,354 @@
                 font-size: 2rem;
             }
 
-            .container {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-                margin: 1rem auto;
-            }
-
-            .sidebar {
-                flex-direction: column;
-            }
-
             .numbers-grid {
                 grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
-                gap: 0.6rem;
             }
 
             .action-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
                 grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <div id="root"></div>
+    <div class="app-header">
+        <h1>🎰 TURBITO</h1>
+        <p>Juega, Gana, Disfruta</p>
+    </div>
 
-    <script type="text/babel">
-        const { useState, useEffect } = React;
+    <div class="container">
+        <div class="main-content">
+            <!-- Balance -->
+            <div class="balance-card">
+                <h3>Saldo Disponible</h3>
+                <div class="balance-amount">S/ <span id="userBalance">10000</span></div>
+            </div>
 
-        // Componente UserBalance
-        const UserBalance = ({ balance, winnings }) => {
-            const [showWinning, setShowWinning] = useState(false);
-
-            useEffect(() => {
-                if (winnings > 0) {
-                    setShowWinning(true);
-                    const timer = setTimeout(() => setShowWinning(false), 3000);
-                    return () => clearTimeout(timer);
-                }
-            }, [winnings]);
-
-            return (
-                <div className="user-balance">
-                    <div className="balance-card">
-                        <h3>Saldo Disponible</h3>
-                        <div className="balance-amount">S/ {balance.toLocaleString()}</div>
-                    </div>
-                    {showWinning && (
-                        <div className="winning-notification">
-                            <span>¡GANASTE S/ {winnings.toLocaleString()}!</span>
-                        </div>
-                    )}
-                </div>
-            );
-        };
-
-        // Componente DrawDisplay
-        const DrawDisplay = ({ drawnNumbers, nextDrawTime, formatTime }) => {
-            return (
-                <div className="draw-display">
-                    <div className="draw-header">
-                        <h2>Último Sorteo</h2>
-                        <div className="timer">
-                            <span className="timer-label">Próximo en:</span>
-                            <span className="timer-value">{formatTime(nextDrawTime)}</span>
-                        </div>
-                    </div>
-
-                    {drawnNumbers.length > 0 ? (
-                        <div className="drawn-numbers">
-                            {drawnNumbers.map((num) => (
-                                <div key={num} className="drawn-number">
-                                    {num}
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="no-draw">
-                            <p>Esperando primer sorteo...</p>
-                        </div>
-                    )}
-                </div>
-            );
-        };
-
-        // Componente GameBoard
-        const GameBoard = ({
-            selectedNumbers,
-            toggleNumber,
-            placeBet,
-            clearSelection,
-            autoSelect,
-            betAmount,
-            setBetAmount,
-            selectedCount,
-        }) => {
-            return (
-                <div className="game-board">
-                    <div className="numbers-grid">
-                        {Array.from({ length: 24 }, (_, i) => i + 1).map((num) => (
-                            <button
-                                key={num}
-                                className={`number-btn ${selectedNumbers.includes(num) ? 'selected' : ''}`}
-                                onClick={() => toggleNumber(num)}
-                            >
-                                {num}
-                            </button>
-                        ))}
-                    </div>
-
-                    <div className="bet-controls">
-                        <div className="selection-info">
-                            <span className="counter">{selectedCount}/12 seleccionados</span>
-                        </div>
-
-                        <div className="bet-amount-control">
-                            <label htmlFor="bet-amount">Monto de Apuesta:</label>
-                            <div className="bet-input-group">
-                                <button className="bet-quick-btn" onClick={() => setBetAmount(Math.max(10, betAmount - 50))}>-</button>
-                                <input
-                                    id="bet-amount"
-                                    type="number"
-                                    value={betAmount}
-                                    onChange={(e) => setBetAmount(Math.max(10, parseInt(e.target.value) || 0)))}
-                                    min="10"
-                                    max="10000"
-                                />
-                                <button className="bet-quick-btn" onClick={() => setBetAmount(betAmount + 50)}>+</button>
-                            </div>
-                            <span className="bet-label">S/ {betAmount}</span>
-                        </div>
-
-                        <div className="action-buttons">
-                            <button className="btn btn-primary" onClick={placeBet} disabled={selectedCount !== 12}>
-                                APOSTAR
-                            </button>
-                            <button className="btn btn-secondary" onClick={autoSelect}>
-                                AUTO
-                            </button>
-                            <button className="btn btn-danger" onClick={clearSelection}>
-                                LIMPIAR
-                            </button>
-                        </div>
+            <!-- Draw Display -->
+            <div class="draw-display">
+                <div class="draw-header">
+                    <h2>Último Sorteo</h2>
+                    <div class="timer">
+                        <span class="timer-label">Próximo en:</span>
+                        <span class="timer-value" id="timerValue">5:00</span>
                     </div>
                 </div>
-            );
-        };
+                <div class="drawn-numbers" id="drawnNumbers">
+                    <div class="no-draw">Esperando primer sorteo...</div>
+                </div>
+            </div>
 
-        // Componente AIPlayers
-        const AIPlayers = ({ players }) => {
-            return (
-                <div className="ai-players">
-                    <h3>Jugadores IA</h3>
-                    <div className="players-list">
-                        {players.map((player) => (
-                            <div key={player.id} className="player-card">
-                                <div className="player-name">{player.name}</div>
-                                <div className="player-balance">S/ {player.balance.toLocaleString()}</div>
-                                {player.bets.length > 0 && (
-                                    <div className="player-bet-info">
-                                        <span className="bet-result">
-                                            {player.bets[0].matches} aciertos
-                                        </span>
-                                        {player.bets[0].prize > 0 && (
-                                            <span className="bet-win">+S/ {player.bets[0].prize}</span>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                        ))}
+            <!-- Game Board -->
+            <div class="game-board">
+                <div class="numbers-grid" id="numbersGrid"></div>
+
+                <div class="bet-controls">
+                    <div class="selection-info"><span id="selectedCount">0</span>/12 seleccionados</div>
+
+                    <div class="bet-amount-control">
+                        <label>Monto de Apuesta:</label>
+                        <div class="bet-input-group">
+                            <button class="bet-quick-btn" onclick="decreaseBet()">-</button>
+                            <input type="number" id="betAmount" value="100" min="10" max="10000">
+                            <button class="bet-quick-btn" onclick="increaseBet()">+</button>
+                        </div>
+                        <span class="bet-label">S/ <span id="betDisplay">100</span></span>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="bettingBtn" onclick="placeBet()">APOSTAR</button>
+                        <button class="btn btn-secondary" onclick="autoSelect()">AUTO</button>
+                        <button class="btn btn-danger" onclick="clearSelection()">LIMPIAR</button>
                     </div>
                 </div>
-            );
-        };
+            </div>
+        </div>
 
-        // Componente GameStats
-        const GameStats = ({ history }) => {
-            return (
-                <div className="game-stats">
-                    <h3>Histórico</h3>
-                    <div className="stats-list">
-                        {history.length === 0 ? (
-                            <div className="no-history">Sin histórico aún</div>
-                        ) : (
-                            history.map((stat, index) => (
-                                <div key={index} className={`stat-item ${stat.prize > 0 ? 'win' : ''}`}>
-                                    <div className="stat-header">
-                                        <span className="stat-matches">{stat.matches} aciertos</span>
-                                        {stat.prize > 0 && <span className="stat-prize">+S/ {stat.prize}</span>}
-                                    </div>
-                                    <div className="stat-time">
-                                        {new Date(stat.timestamp).toLocaleTimeString()}
-                                    </div>
-                                </div>
-                            ))
-                        )}
-                    </div>
+        <aside class="sidebar">
+            <!-- AI Players -->
+            <div class="ai-players">
+                <h3>Jugadores IA</h3>
+                <div class="players-list" id="aiPlayersList"></div>
+            </div>
+
+            <!-- Game Stats -->
+            <div class="game-stats">
+                <h3>Histórico</h3>
+                <div class="stats-list" id="statsList">
+                    <div class="no-history">Sin histórico aún</div>
                 </div>
-            );
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        // Estado del juego
+        let gameState = {
+            selectedNumbers: [],
+            userBalance: 10000,
+            betAmount: 100,
+            drawnNumbers: [],
+            nextDrawTime: 300,
+            gameHistory: [],
+            userBets: [],
+            aiPlayers: [
+                { id: 1, name: 'IA - Player 1', balance: 50000, bets: [] },
+                { id: 2, name: 'IA - Player 2', balance: 50000, bets: [] },
+                { id: 3, name: 'IA - Player 3', balance: 50000, bets: [] },
+                { id: 4, name: 'IA - Player 4', balance: 50000, bets: [] },
+            ]
         };
 
-        // Componente Principal App
-        const App = () => {
-            const [selectedNumbers, setSelectedNumbers] = useState([]);
-            const [userBalance, setUserBalance] = useState(10000);
-            const [betAmount, setBetAmount] = useState(100);
-            const [gameStarted, setGameStarted] = useState(false);
-            const [drawnNumbers, setDrawnNumbers] = useState([]);
-            const [nextDrawTime, setNextDrawTime] = useState(0);
-            const [aiPlayers, setAIPlayers] = useState([]);
-            const [gameHistory, setGameHistory] = useState([]);
-            const [userBets, setUserBets] = useState([]);
-            const [winnings, setWinnings] = useState(0);
+        // Inicializar grid de números
+        function initNumbersGrid() {
+            const grid = document.getElementById('numbersGrid');
+            grid.innerHTML = '';
+            for (let i = 1; i <= 24; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'number-btn';
+                btn.textContent = i;
+                btn.onclick = () => toggleNumber(i);
+                grid.appendChild(btn);
+            }
+        }
 
-            // Inicializar jugadores IA
-            useEffect(() => {
-                const players = [
-                    { id: 1, name: 'IA - Player 1', balance: 50000, bets: [] },
-                    { id: 2, name: 'IA - Player 2', balance: 50000, bets: [] },
-                    { id: 3, name: 'IA - Player 3', balance: 50000, bets: [] },
-                    { id: 4, name: 'IA - Player 4', balance: 50000, bets: [] },
-                ];
-                setAIPlayers(players);
-                setGameStarted(true);
-                setNextDrawTime(300); // 5 minutos
-            }, []);
+        // Seleccionar/deseleccionar número
+        function toggleNumber(num) {
+            if (gameState.selectedNumbers.includes(num)) {
+                gameState.selectedNumbers = gameState.selectedNumbers.filter(n => n !== num);
+            } else if (gameState.selectedNumbers.length < 12) {
+                gameState.selectedNumbers.push(num);
+            }
+            updateUI();
+        }
 
-            // Timer para el sorteo
-            useEffect(() => {
-                if (!gameStarted) return;
+        // Selección automática
+        function autoSelect() {
+            gameState.selectedNumbers = generateRandomNumbers();
+            updateUI();
+        }
 
-                const timer = setInterval(() => {
-                    setNextDrawTime((prev) => {
-                        if (prev <= 1) {
-                            performDraw();
-                            return 300; // Reiniciar a 5 minutos
-                        }
-                        return prev - 1;
-                    });
-                }, 1000);
+        // Limpiar selección
+        function clearSelection() {
+            gameState.selectedNumbers = [];
+            updateUI();
+        }
 
-                return () => clearInterval(timer);
-            }, [gameStarted, userBets, aiPlayers]);
+        // Generar números aleatorios
+        function generateRandomNumbers() {
+            const numbers = [];
+            while (numbers.length < 12) {
+                const num = Math.floor(Math.random() * 24) + 1;
+                if (!numbers.includes(num)) numbers.push(num);
+            }
+            return numbers.sort((a, b) => a - b);
+        }
 
-            const performDraw = () => {
-                // Sortear 12 números de 24
-                const drawn = [];
-                while (drawn.length < 12) {
-                    const num = Math.floor(Math.random() * 24) + 1;
-                    if (!drawn.includes(num)) drawn.push(num);
-                }
-                drawn.sort((a, b) => a - b);
-                setDrawnNumbers(drawn);
+        // Aumentar/disminuir apuesta
+        function increaseBet() {
+            gameState.betAmount = Math.min(gameState.betAmount + 50, 10000);
+            updateUI();
+        }
 
-                // Calcular resultados para el usuario
-                if (userBets.length > 0) {
-                    const lastBet = userBets[userBets.length - 1];
-                    const matches = lastBet.numbers.filter((n) => drawn.includes(n)).length;
-                    const unmatches = 12 - matches;
+        function decreaseBet() {
+            gameState.betAmount = Math.max(gameState.betAmount - 50, 10);
+            updateUI();
+        }
 
-                    let prize = 0;
-                    let message = '';
+        // Realizar apuesta
+        function placeBet() {
+            if (gameState.selectedNumbers.length !== 12) {
+                alert('Debes seleccionar exactamente 12 números');
+                return;
+            }
+            if (gameState.betAmount > gameState.userBalance) {
+                alert('No tienes suficiente saldo');
+                return;
+            }
 
-                    if (matches === 12 || unmatches === 0) {
-                        prize = 100000;
-                        message = '¡12 aciertos! ¡GANASTE S/ 100,000!';
-                    } else if (matches === 11 || unmatches === 1) {
-                        prize = 1000;
-                        message = '¡11 aciertos! ¡GANASTE S/ 1,000!';
-                    } else if (matches === 10 || unmatches === 2) {
-                        prize = 40;
-                        message = '¡10 aciertos! ¡GANASTE S/ 40!';
-                    } else if (matches === 9 || unmatches === 3) {
-                        prize = 4;
-                        message = '¡9 aciertos! ¡GANASTE S/ 4!';
-                    } else if (matches === 8 || unmatches === 4 || matches === 6) {
-                        prize = 0;
-                        message = '¡Jugada Gratis Turbito!';
-                    }
+            gameState.userBalance -= gameState.betAmount;
+            gameState.userBets.push({
+                numbers: [...gameState.selectedNumbers],
+                amount: gameState.betAmount
+            });
+            gameState.selectedNumbers = [];
+            updateUI();
+        }
 
-                    if (prize > 0) {
-                        setUserBalance((prev) => prev + prize);
-                        setWinnings(prize);
-                    }
+        // Realizar sorteo
+        function performDraw() {
+            const drawn = [];
+            while (drawn.length < 12) {
+                const num = Math.floor(Math.random() * 24) + 1;
+                if (!drawn.includes(num)) drawn.push(num);
+            }
+            drawn.sort((a, b) => a - b);
+            gameState.drawnNumbers = drawn;
 
-                    const result = {
-                        draw: drawn,
-                        userBet: lastBet.numbers,
-                        matches,
-                        prize,
-                        message,
-                        timestamp: new Date(),
-                    };
-                    setGameHistory((prev) => [result, ...prev.slice(0, 9)]);
+            // Calcular resultados del usuario
+            if (gameState.userBets.length > 0) {
+                const lastBet = gameState.userBets[gameState.userBets.length - 1];
+                const matches = lastBet.numbers.filter(n => drawn.includes(n)).length;
+                const unmatches = 12 - matches;
+
+                let prize = 0;
+
+                if (matches === 12 || unmatches === 0) {
+                    prize = 100000;
+                } else if (matches === 11 || unmatches === 1) {
+                    prize = 1000;
+                } else if (matches === 10 || unmatches === 2) {
+                    prize = 40;
+                } else if (matches === 9 || unmatches === 3) {
+                    prize = 4;
                 }
 
-                // IA hace apuestas después del sorteo
-                generateAIBets(drawn);
-            };
+                if (prize > 0) {
+                    gameState.userBalance += prize;
+                    showWinning(prize);
+                }
 
-            const generateAIBets = (lastDraw) => {
-                const updatedPlayers = aiPlayers.map((player) => {
-                    const bet = {
-                        amount: Math.floor(Math.random() * 500) + 50,
-                        numbers: generateRandomNumbers(),
-                    };
-
-                    let prize = 0;
-                    const matches = bet.numbers.filter((n) => lastDraw.includes(n)).length;
-                    const unmatches = 12 - matches;
-
-                    if (matches === 12 || unmatches === 0) {
-                        prize = 100000;
-                    } else if (matches === 11 || unmatches === 1) {
-                        prize = 1000;
-                    } else if (matches === 10 || unmatches === 2) {
-                        prize = 40;
-                    } else if (matches === 9 || unmatches === 3) {
-                        prize = 4;
-                    }
-
-                    return {
-                        ...player,
-                        balance: player.balance - bet.amount + prize,
-                        bets: [{ ...bet, matches, prize }],
-                    };
+                gameState.gameHistory.unshift({
+                    draw: drawn,
+                    userBet: lastBet.numbers,
+                    matches,
+                    prize,
+                    timestamp: new Date()
                 });
-                setAIPlayers(updatedPlayers);
-            };
-
-            const generateRandomNumbers = () => {
-                const numbers = [];
-                while (numbers.length < 12) {
-                    const num = Math.floor(Math.random() * 24) + 1;
-                    if (!numbers.includes(num)) numbers.push(num);
+                if (gameState.gameHistory.length > 10) {
+                    gameState.gameHistory.pop();
                 }
-                return numbers.sort((a, b) => a - b);
-            };
+            }
 
-            const toggleNumber = (num) => {
-                if (selectedNumbers.includes(num)) {
-                    setSelectedNumbers(selectedNumbers.filter((n) => n !== num));
-                } else if (selectedNumbers.length < 12) {
-                    setSelectedNumbers([...selectedNumbers, num]);
-                }
-            };
+            // IA hace apuestas
+            generateAIBets(drawn);
+            updateUI();
+        }
 
-            const placeBet = () => {
-                if (selectedNumbers.length !== 12) {
-                    alert('Debes seleccionar exactamente 12 números');
-                    return;
-                }
-                if (betAmount > userBalance) {
-                    alert('No tienes suficiente saldo');
-                    return;
+        // Generar apuestas IA
+        function generateAIBets(lastDraw) {
+            gameState.aiPlayers = gameState.aiPlayers.map(player => {
+                const numbers = generateRandomNumbers();
+                const matches = numbers.filter(n => lastDraw.includes(n)).length;
+                const unmatches = 12 - matches;
+
+                let prize = 0;
+                if (matches === 12 || unmatches === 0) {
+                    prize = 100000;
+                } else if (matches === 11 || unmatches === 1) {
+                    prize = 1000;
+                } else if (matches === 10 || unmatches === 2) {
+                    prize = 40;
+                } else if (matches === 9 || unmatches === 3) {
+                    prize = 4;
                 }
 
-                setUserBalance((prev) => prev - betAmount);
-                const bet = {
-                    numbers: [...selectedNumbers],
-                    amount: betAmount,
-                    timestamp: new Date(),
+                return {
+                    ...player,
+                    balance: player.balance - 100 + prize,
+                    bets: [{ matches, prize }]
                 };
-                setUserBets((prev) => [bet, ...prev]);
-                setSelectedNumbers([]);
-                setWinnings(0);
-                alert('¡Apuesta realizada! Espera el próximo sorteo.');
-            };
+            });
+        }
 
-            const clearSelection = () => {
-                setSelectedNumbers([]);
-            };
+        // Mostrar ganancia
+        function showWinning(amount) {
+            const notification = document.createElement('div');
+            notification.className = 'winning-notification';
+            notification.textContent = `¡GANASTE S/ ${amount.toLocaleString()}!`;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
 
-            const autoSelect = () => {
-                setSelectedNumbers(generateRandomNumbers());
-            };
+        // Formatear tiempo
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
 
-            const formatTime = (seconds) => {
-                const mins = Math.floor(seconds / 60);
-                const secs = seconds % 60;
-                return `${mins}:${secs.toString().padStart(2, '0')}`;
-            };
+        // Actualizar UI
+        function updateUI() {
+            // Actualizar números seleccionados
+            const buttons = document.querySelectorAll('.number-btn');
+            buttons.forEach((btn, i) => {
+                const num = i + 1;
+                if (gameState.selectedNumbers.includes(num)) {
+                    btn.classList.add('selected');
+                } else {
+                    btn.classList.remove('selected');
+                }
+            });
 
-            return (
-                <div className="app">
-                    <header className="app-header">
-                        <h1>🎰 TURBITO</h1>
-                        <p>Juega, Gana, Disfruta</p>
-                    </header>
+            // Actualizar contador
+            document.getElementById('selectedCount').textContent = gameState.selectedNumbers.length;
+            document.getElementById('bettingBtn').disabled = gameState.selectedNumbers.length !== 12;
 
-                    <div className="container">
-                        <div className="main-content">
-                            <UserBalance balance={userBalance} winnings={winnings} />
-                            <DrawDisplay drawnNumbers={drawnNumbers} nextDrawTime={nextDrawTime} formatTime={formatTime} />
-                            <GameBoard
-                                selectedNumbers={selectedNumbers}
-                                toggleNumber={toggleNumber}
-                                placeBet={placeBet}
-                                clearSelection={clearSelection}
-                                autoSelect={autoSelect}
-                                betAmount={betAmount}
-                                setBetAmount={setBetAmount}
-                                selectedCount={selectedNumbers.length}
-                            />
+            // Actualizar balance
+            document.getElementById('userBalance').textContent = gameState.userBalance.toLocaleString();
+            document.getElementById('betAmount').value = gameState.betAmount;
+            document.getElementById('betDisplay').textContent = gameState.betAmount.toLocaleString();
+
+            // Actualizar números sorteados
+            const drawnDiv = document.getElementById('drawnNumbers');
+            if (gameState.drawnNumbers.length > 0) {
+                drawnDiv.innerHTML = gameState.drawnNumbers.map(num =>
+                    `<div class="drawn-number">${num}</div>`
+                ).join('');
+            }
+
+            // Actualizar jugadores IA
+            const aiList = document.getElementById('aiPlayersList');
+            aiList.innerHTML = gameState.aiPlayers.map(player =>
+                `<div class="player-card">
+                    <div class="player-name">${player.name}</div>
+                    <div class="player-balance">S/ ${player.balance.toLocaleString()}</div>
+                    ${player.bets.length > 0 ? `
+                        <div class="player-bet-info">
+                            <span>${player.bets[0].matches} aciertos</span>
+                            ${player.bets[0].prize > 0 ? `<span class="bet-win">+S/ ${player.bets[0].prize}</span>` : ''}
                         </div>
+                    ` : ''}
+                </div>`
+            ).join('');
 
-                        <aside className="sidebar">
-                            <AIPlayers players={aiPlayers} />
-                            <GameStats history={gameHistory} />
-                        </aside>
-                    </div>
-                </div>
-            );
-        };
+            // Actualizar histórico
+            const statsList = document.getElementById('statsList');
+            if (gameState.gameHistory.length === 0) {
+                statsList.innerHTML = '<div class="no-history">Sin histórico aún</div>';
+            } else {
+                statsList.innerHTML = gameState.gameHistory.map(stat =>
+                    `<div class="stat-item ${stat.prize > 0 ? 'win' : ''}">
+                        <div><span class="stat-matches">${stat.matches} aciertos</span>
+                        ${stat.prize > 0 ? `<span class="stat-prize"> +S/ ${stat.prize}</span>` : ''}</div>
+                        <div class="stat-time">${stat.timestamp.toLocaleTimeString()}</div>
+                    </div>`
+                ).join('');
+            }
+        }
 
-        // Renderizar la aplicación
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        // Timer principal
+        function startTimer() {
+            setInterval(() => {
+                if (gameState.nextDrawTime <= 0) {
+                    performDraw();
+                    gameState.nextDrawTime = 300;
+                } else {
+                    gameState.nextDrawTime--;
+                }
+                document.getElementById('timerValue').textContent = formatTime(gameState.nextDrawTime);
+            }, 1000);
+        }
+
+        // Inicializar
+        initNumbersGrid();
+        updateUI();
+        startTimer();
     </script>
 </body>
 </html>
