@@ -41,10 +41,10 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: 1fr 300px;
+            grid-template-columns: 1fr 320px;
             gap: 2rem;
         }
 
@@ -188,6 +188,74 @@
             text-align: center;
             padding: 2rem;
             color: #999;
+        }
+
+        /* My Bet Section */
+        .my-bet-section {
+            background: rgba(15, 52, 96, 0.8);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 2px solid #e94560;
+        }
+
+        .my-bet-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #e94560;
+        }
+
+        .bet-display {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #533483;
+            margin-bottom: 1rem;
+        }
+
+        .bet-amount-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid rgba(83, 52, 131, 0.3);
+        }
+
+        .bet-amount-label {
+            font-weight: bold;
+            color: #e94560;
+        }
+
+        .selected-numbers-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+            gap: 0.6rem;
+        }
+
+        .selected-num-badge {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e94560 0%, #c23049 100%);
+            border: 2px solid #ff6b7a;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(233, 69, 96, 0.3);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .selected-num-badge:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(233, 69, 96, 0.6);
+        }
+
+        .no-bet-yet {
+            text-align: center;
+            color: #999;
+            padding: 1rem;
         }
 
         /* Game Board */
@@ -384,6 +452,18 @@
             padding: 1rem;
             border-radius: 8px;
             border: 1px solid rgba(83, 52, 131, 0.5);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .player-card:hover {
+            background: rgba(83, 52, 131, 0.2);
+            border-color: #533483;
+        }
+
+        .player-card.expanded {
+            background: rgba(83, 52, 131, 0.3);
+            border-color: #e94560;
         }
 
         .player-name {
@@ -395,10 +475,10 @@
         .player-balance {
             color: #e94560;
             font-weight: bold;
+            margin-bottom: 0.4rem;
         }
 
         .player-bet-info {
-            margin-top: 0.5rem;
             font-size: 0.8rem;
             display: flex;
             justify-content: space-between;
@@ -407,6 +487,44 @@
         .bet-win {
             color: #27ae60;
             font-weight: bold;
+        }
+
+        .player-numbers {
+            margin-top: 0.8rem;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(83, 52, 131, 0.5);
+        }
+
+        .player-numbers h4 {
+            font-size: 0.75rem;
+            color: #999;
+            margin-bottom: 0.4rem;
+            text-transform: uppercase;
+        }
+
+        .player-numbers-display {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.4rem;
+        }
+
+        .player-num {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(83, 52, 131, 0.5);
+            border: 1px solid #533483;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .player-num.match {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            border-color: #2ecc71;
+            box-shadow: 0 0 8px rgba(39, 174, 96, 0.4);
         }
 
         /* Game Stats */
@@ -438,6 +556,12 @@
             border-radius: 6px;
             border-left: 3px solid #533483;
             font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .stat-item:hover {
+            background: rgba(83, 52, 131, 0.2);
         }
 
         .stat-item.win {
@@ -465,6 +589,18 @@
             text-align: center;
             color: #666;
             padding: 1rem;
+        }
+
+        .stat-details {
+            margin-top: 0.8rem;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(83, 52, 131, 0.3);
+            font-size: 0.75rem;
+        }
+
+        .stat-details p {
+            margin: 0.3rem 0;
+            color: #ccc;
         }
 
         @media (max-width: 1024px) {
@@ -515,7 +651,7 @@
             <!-- Draw Display -->
             <div class="draw-display">
                 <div class="draw-header">
-                    <h2>Último Sorteo</h2>
+                    <h2>Números Sorteados</h2>
                     <div class="timer">
                         <span class="timer-label">Próximo en:</span>
                         <span class="timer-value" id="timerValue">5:00</span>
@@ -523,6 +659,14 @@
                 </div>
                 <div class="drawn-numbers" id="drawnNumbers">
                     <div class="no-draw">Esperando primer sorteo...</div>
+                </div>
+            </div>
+
+            <!-- My Current Bet -->
+            <div class="my-bet-section">
+                <h3>Mi Apuesta Actual</h3>
+                <div id="myBetDisplay" class="no-bet-yet">
+                    Selecciona 12 números para hacer una apuesta
                 </div>
             </div>
 
@@ -580,11 +724,12 @@
             gameHistory: [],
             userBets: [],
             aiPlayers: [
-                { id: 1, name: 'IA - Player 1', balance: 50000, bets: [] },
-                { id: 2, name: 'IA - Player 2', balance: 50000, bets: [] },
-                { id: 3, name: 'IA - Player 3', balance: 50000, bets: [] },
-                { id: 4, name: 'IA - Player 4', balance: 50000, bets: [] },
-            ]
+                { id: 1, name: 'IA - Player 1', balance: 50000, bets: [], numbers: [] },
+                { id: 2, name: 'IA - Player 2', balance: 50000, bets: [], numbers: [] },
+                { id: 3, name: 'IA - Player 3', balance: 50000, bets: [], numbers: [] },
+                { id: 4, name: 'IA - Player 4', balance: 50000, bets: [], numbers: [] },
+            ],
+            expandedAI: null
         };
 
         // Inicializar grid de números
@@ -606,6 +751,7 @@
                 gameState.selectedNumbers = gameState.selectedNumbers.filter(n => n !== num);
             } else if (gameState.selectedNumbers.length < 12) {
                 gameState.selectedNumbers.push(num);
+                gameState.selectedNumbers.sort((a, b) => a - b);
             }
             updateUI();
         }
@@ -657,10 +803,12 @@
             gameState.userBalance -= gameState.betAmount;
             gameState.userBets.push({
                 numbers: [...gameState.selectedNumbers],
-                amount: gameState.betAmount
+                amount: gameState.betAmount,
+                timestamp: new Date()
             });
             gameState.selectedNumbers = [];
             updateUI();
+            alert('¡Apuesta realizada! Espera el próximo sorteo.');
         }
 
         // Realizar sorteo
@@ -734,7 +882,8 @@
                 return {
                     ...player,
                     balance: player.balance - 100 + prize,
-                    bets: [{ matches, prize }]
+                    bets: [{ matches, prize }],
+                    numbers: numbers
                 };
             });
         }
@@ -753,6 +902,16 @@
             const mins = Math.floor(seconds / 60);
             const secs = seconds % 60;
             return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Toggle AI info
+        function toggleAIInfo(playerId) {
+            if (gameState.expandedAI === playerId) {
+                gameState.expandedAI = null;
+            } else {
+                gameState.expandedAI = playerId;
+            }
+            updateUI();
         }
 
         // Actualizar UI
@@ -777,6 +936,27 @@
             document.getElementById('betAmount').value = gameState.betAmount;
             document.getElementById('betDisplay').textContent = gameState.betAmount.toLocaleString();
 
+            // Actualizar mi apuesta actual
+            const myBetDisplay = document.getElementById('myBetDisplay');
+            if (gameState.selectedNumbers.length > 0) {
+                myBetDisplay.innerHTML = `
+                    <div class="bet-display">
+                        <div class="bet-amount-info">
+                            <span class="bet-amount-label">Apuesta: S/ ${gameState.betAmount}</span>
+                            <span style="color: #27ae60; font-weight: bold;">${gameState.selectedNumbers.length}/12</span>
+                        </div>
+                        <div class="selected-numbers-display">
+                            ${gameState.selectedNumbers.map(num => 
+                                `<div class="selected-num-badge" onclick="toggleNumber(${num})" title="Click para eliminar">${num}</div>`
+                            ).join('')}
+                        </div>
+                        <p style="margin-top: 0.8rem; font-size: 0.75rem; color: #999; text-align: center;">Click en un número para eliminarlo</p>
+                    </div>
+                `;
+            } else {
+                myBetDisplay.innerHTML = '<div class="no-bet-yet">Selecciona 12 números para hacer una apuesta</div>';
+            }
+
             // Actualizar números sorteados
             const drawnDiv = document.getElementById('drawnNumbers');
             if (gameState.drawnNumbers.length > 0) {
@@ -787,29 +967,47 @@
 
             // Actualizar jugadores IA
             const aiList = document.getElementById('aiPlayersList');
-            aiList.innerHTML = gameState.aiPlayers.map(player =>
-                `<div class="player-card">
-                    <div class="player-name">${player.name}</div>
-                    <div class="player-balance">S/ ${player.balance.toLocaleString()}</div>
-                    ${player.bets.length > 0 ? `
-                        <div class="player-bet-info">
-                            <span>${player.bets[0].matches} aciertos</span>
-                            ${player.bets[0].prize > 0 ? `<span class="bet-win">+S/ ${player.bets[0].prize}</span>` : ''}
-                        </div>
-                    ` : ''}
-                </div>`
-            ).join('');
+            aiList.innerHTML = gameState.aiPlayers.map(player => {
+                const isExpanded = gameState.expandedAI === player.id;
+                return `
+                    <div class="player-card ${isExpanded ? 'expanded' : ''}" onclick="toggleAIInfo(${player.id})">
+                        <div class="player-name">${player.name}</div>
+                        <div class="player-balance">S/ ${player.balance.toLocaleString()}</div>
+                        ${player.bets.length > 0 ? `
+                            <div class="player-bet-info">
+                                <span>${player.bets[0].matches} aciertos</span>
+                                ${player.bets[0].prize > 0 ? `<span class="bet-win">+S/ ${player.bets[0].prize}</span>` : '<span style="color: #999;">-</span>'}
+                            </div>
+                        ` : ''}
+                        ${isExpanded && player.numbers.length > 0 ? `
+                            <div class="player-numbers">
+                                <h4>Sus Números:</h4>
+                                <div class="player-numbers-display">
+                                    ${player.numbers.map(num => {
+                                        const isMatch = gameState.drawnNumbers.includes(num);
+                                        return `<div class="player-num ${isMatch ? 'match' : ''}">${num}</div>`;
+                                    }).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
 
             // Actualizar histórico
             const statsList = document.getElementById('statsList');
             if (gameState.gameHistory.length === 0) {
                 statsList.innerHTML = '<div class="no-history">Sin histórico aún</div>';
             } else {
-                statsList.innerHTML = gameState.gameHistory.map(stat =>
+                statsList.innerHTML = gameState.gameHistory.map((stat, idx) =>
                     `<div class="stat-item ${stat.prize > 0 ? 'win' : ''}">
                         <div><span class="stat-matches">${stat.matches} aciertos</span>
                         ${stat.prize > 0 ? `<span class="stat-prize"> +S/ ${stat.prize}</span>` : ''}</div>
                         <div class="stat-time">${stat.timestamp.toLocaleTimeString()}</div>
+                        <div class="stat-details">
+                            <p>📊 Sorteados: ${stat.draw.join(', ')}</p>
+                            <p>🎯 Tus números: ${stat.userBet.join(', ')}</p>
+                        </div>
                     </div>`
                 ).join('');
             }
