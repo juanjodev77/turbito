@@ -1,0 +1,54 @@
+.user-balance {
+  position: relative;
+}
+
+.balance-card {
+  background: linear-gradient(135deg, #e94560 0%, #c23049 100%);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  border: 2px solid #ff6b7a;
+  box-shadow: 0 4px 15px rgba(233, 69, 96, 0.3);
+}
+
+.balance-card h3 {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.balance-amount {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.winning-notification {
+  position: absolute;
+  top: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, #27ae60 0%, #229954 100%);
+  color: #fff;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(39, 174, 96, 0.4);
+  animation: slideDown 0.5s ease-out;
+}
+
+@keyframes slideDown {
+  0% {
+    transform: translateX(-50%) translateY(-20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+}

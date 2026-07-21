@@ -1,0 +1,79 @@
+.ai-players {
+  background: rgba(15, 52, 96, 0.8);
+  border-radius: 12px;
+  padding: 1.5rem;
+  backdrop-filter: blur(10px);
+  border: 2px solid #533483;
+}
+
+.ai-players h3 {
+  margin: 0 0 1rem;
+  font-size: 1.2rem;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.players-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.player-card {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(83, 52, 131, 0.5);
+  transition: all 0.3s ease;
+}
+
+.player-card:hover {
+  border-color: #533483;
+  background: rgba(83, 52, 131, 0.2);
+}
+
+.player-name {
+  font-weight: bold;
+  color: #fff;
+  font-size: 0.95rem;
+  margin-bottom: 0.4rem;
+}
+
+.player-balance {
+  font-size: 1rem;
+  color: #e94560;
+  font-weight: bold;
+}
+
+.player-bet-info {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.bet-result {
+  color: #999;
+}
+
+.bet-win {
+  color: #27ae60;
+  font-weight: bold;
+}
+
+@media (max-width: 1024px) {
+  .ai-players {
+    min-width: 0;
+  }
+
+  .players-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+  }
+
+  .player-card {
+    padding: 0.8rem;
+  }
+}
